@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.db
+.env
+htmlcov/
+.coverage
+coverage.xml
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+.angular/
+
+# Playwright
+frontend/playwright-report/
+frontend/test-results/
+frontend/e2e-test.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
