@@ -22,13 +22,6 @@ async def db_engine():
 
 
 @pytest_asyncio.fixture()
-async def db(db_engine):
-    Session = async_sessionmaker(db_engine, expire_on_commit=False)
-    async with Session() as session:
-        yield session
-
-
-@pytest_asyncio.fixture()
 async def client(db_engine):
     Session = async_sessionmaker(db_engine, expire_on_commit=False)
 
@@ -44,7 +37,14 @@ async def client(db_engine):
 
 
 @pytest_asyncio.fixture()
-async def test_user(db):
+async def db(db_engine):
+    Session = async_sessionmaker(db_engine, expire_on_commit=False)
+    async with Session() as session:
+        yield session
+
+
+@pytest_asyncio.fixture()
+async def test_user(db: AsyncSession):
     user = User(
         email="test@example.com",
         username="testuser",
@@ -57,6 +57,6 @@ async def test_user(db):
 
 
 @pytest_asyncio.fixture()
-async def auth_headers(test_user):
+async def auth_headers(test_user: User):
     token = create_access_token({"sub": test_user.id})
     return {"Authorization": f"Bearer {token}"}
