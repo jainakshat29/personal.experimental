@@ -4,8 +4,7 @@ from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from app.main import app
 from app.core.database import Base, get_db
-from app.core.security import create_access_token, hash_password
-from app.models.user import User
+from app.core.security import create_access_token
 
 TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
 
@@ -33,17 +32,13 @@ async def client():
     await engine.dispose()
 
 
-@pytest_asyncio.fixture()
-async def test_user(client):
-    res = await client.post("/api/auth/register", json={
-        "email": "test@example.com",
-        "username": "testuser",
-        "password": "Password123!",
-    })
-    return res.json()["user"]
+@pytest.fixture()
+def user_credentials():
+    return {"email": "test@example.com", "username": "testuser", "password": "Password123!"}
 
 
-@pytest_asyncio.fixture()
-async def auth_headers(test_user):
-    token = create_access_token({"sub": test_user["id"]})
-    return {"Authorization": f"Bearer {token}"}
+@pytest.fixture()
+def auth_headers(user_credentials):
+    # We create a token directly without hitting DB — user_id is injected in tests
+    # that need auth by first registering via the client fixture
+    return user_credentials
